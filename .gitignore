@@ -1,0 +1,27 @@
+# STM32CubeIDE settings
+.settings/
+
+# Build output
+Debug/
+Release/
+build/
+build-*/
+
+# Compiled files
+*.elf
+*.bin
+*.hex
+*.map
+
+# VS Code
+.vscode/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Temporary files
+*.tmp
+*.log
