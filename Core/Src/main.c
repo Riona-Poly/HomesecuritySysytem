@@ -17,6 +17,7 @@
 #include "buzzer_task.h"
 #include "lcd.h"
 #include "pir_task.h"
+#include "reed_task.h"
 
 /* USER CODE END Includes */
 
@@ -133,8 +134,7 @@ int main(void)
 
   KeypadTask_Init(keypadQueue);
   PIRTask_Init();
-
-/* USER CODE END RTOS_THREADS */
+  ReedTask_Init();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -257,7 +257,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, KEYPAD_C1_Pin|KEYPAD_C2_Pin|KEYPAD_C3_Pin|KEYPAD_C4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Keypad_led_GPIO_Port, Keypad_led_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, Keypad_led_Pin|REED_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : LED_BUILTIN_Pin PIR_LED_Pin */
   GPIO_InitStruct.Pin = LED_BUILTIN_Pin|PIR_LED_Pin;
@@ -281,18 +281,24 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(PIR_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : REED_Pin_Pin */
+  GPIO_InitStruct.Pin = REED_Pin_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(REED_Pin_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pins : KEYPAD_R1_Pin KEYPAD_R2_Pin KEYPAD_R3_Pin KEYPAD_R4_Pin */
   GPIO_InitStruct.Pin = KEYPAD_R1_Pin|KEYPAD_R2_Pin|KEYPAD_R3_Pin|KEYPAD_R4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Keypad_led_Pin */
-  GPIO_InitStruct.Pin = Keypad_led_Pin;
+  /*Configure GPIO pins : Keypad_led_Pin REED_LED_Pin */
+  GPIO_InitStruct.Pin = Keypad_led_Pin|REED_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Keypad_led_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

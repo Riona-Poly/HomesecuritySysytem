@@ -65,6 +65,8 @@ void Error_Handler(void);
 #define BUZZER_GPIO_Port GPIOA
 #define PIR_Pin GPIO_PIN_2
 #define PIR_GPIO_Port GPIOA
+#define REED_Pin_Pin GPIO_PIN_3
+#define REED_Pin_GPIO_Port GPIOA
 #define KEYPAD_R1_Pin GPIO_PIN_12
 #define KEYPAD_R1_GPIO_Port GPIOB
 #define KEYPAD_R2_Pin GPIO_PIN_13
@@ -83,6 +85,8 @@ void Error_Handler(void);
 #define KEYPAD_C4_GPIO_Port GPIOA
 #define Keypad_led_Pin GPIO_PIN_8
 #define Keypad_led_GPIO_Port GPIOB
+#define REED_LED_Pin GPIO_PIN_9
+#define REED_LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

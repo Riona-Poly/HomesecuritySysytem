@@ -27,11 +27,16 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/keypad.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/keypad_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/security_task.c
+
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/buzzer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/buzzer_task.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/lcd.c   
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/lcd.c
+
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/pir.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/pir_task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/reed_switch.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/reed_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_it.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_hal_msp.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_hal_timebase_tim.c
