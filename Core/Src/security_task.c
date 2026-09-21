@@ -1,5 +1,6 @@
 #include "security_task.h"
 #include "buzzer.h"
+#include "lcd.h"
 #include <string.h>
 
 #define PIN_LENGTH 4
@@ -25,6 +26,10 @@ static void StartSecurityTask(void *argument)
     uint8_t beepRequest;
 
     memset(enteredPIN, 0, sizeof(enteredPIN));
+    LCD_Clear();
+
+    LCD_SetCursor(0, 0);
+    LCD_Print("Enter PIN:");
 
     for (;;)
     {
@@ -38,7 +43,12 @@ static void StartSecurityTask(void *argument)
             {
                 enteredPIN[pinIndex] = key;
                 pinIndex++;
+                LCD_SetCursor(1, pinIndex - 1);
+                char displayChar[2];
+                displayChar[0] = key;
+                displayChar[1] = '\0';
 
+                LCD_Print(displayChar);
                 if (pinIndex == PIN_LENGTH)
                 {
                     enteredPIN[PIN_LENGTH] = '\0';
@@ -54,6 +64,9 @@ static void StartSecurityTask(void *argument)
                         );
 
                         Buzzer_Off();
+                        LCD_Clear();
+                        LCD_SetCursor(0, 0);
+                        LCD_Print("Access Granted");
                     }
                     else
                     {
@@ -73,6 +86,9 @@ static void StartSecurityTask(void *argument)
                             0,
                             0
                         );
+                        LCD_Clear();
+                        LCD_SetCursor(0, 0);
+                        LCD_Print("Wrong Passcode");
                     }
 
                     memset(enteredPIN, 0, sizeof(enteredPIN));

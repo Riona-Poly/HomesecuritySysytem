@@ -15,6 +15,8 @@
 #include "security_task.h"
 #include "keypad_task.h"
 #include "buzzer_task.h"
+#include "lcd.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,8 +35,15 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-/* Definitions for defaultTask */
+I2C_HandleTypeDef hi2c1;
 
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 osMessageQueueId_t keypadQueue;
 osMessageQueueId_t buzzerQueue;
@@ -43,6 +52,8 @@ osMessageQueueId_t buzzerQueue;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_I2C1_Init(void);
+void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -82,7 +93,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  LCD_Init();
 
   /* USER CODE END 2 */
 
@@ -107,17 +120,19 @@ int main(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-/* Create the thread(s) */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-/* Create the application tasks */
-
-buzzerQueue = BuzzerTask_Init();
-
-keypadQueue = SecurityTask_Init(buzzerQueue);
-
-KeypadTask_Init(keypadQueue);
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  /* USER CODE BEGIN RTOS_THREADS */
+
+  buzzerQueue = BuzzerTask_Init();
+
+  keypadQueue = SecurityTask_Init(buzzerQueue);
+
+  KeypadTask_Init(keypadQueue);
+
+/* USER CODE END RTOS_THREADS */
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -177,6 +192,40 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -197,20 +246,23 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(PIR_LED_GPIO_Port, PIR_LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BUZZER_GPIO_Port, BUZZER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, KEYPAD_C1_Pin|KEYPAD_C2_Pin|KEYPAD_C3_Pin|KEYPAD_C4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, PIR_LED_Pin|Keypad_led_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(Keypad_led_GPIO_Port, Keypad_led_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : LED_BUILTIN_Pin */
-  GPIO_InitStruct.Pin = LED_BUILTIN_Pin;
+  /*Configure GPIO pins : LED_BUILTIN_Pin PIR_LED_Pin */
+  GPIO_InitStruct.Pin = LED_BUILTIN_Pin|PIR_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_BUILTIN_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BUZZER_Pin KEYPAD_C1_Pin KEYPAD_C2_Pin KEYPAD_C3_Pin
                            KEYPAD_C4_Pin */
@@ -233,12 +285,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PIR_LED_Pin Keypad_led_Pin */
-  GPIO_InitStruct.Pin = PIR_LED_Pin|Keypad_led_Pin;
+  /*Configure GPIO pin : Keypad_led_Pin */
+  GPIO_InitStruct.Pin = Keypad_led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(Keypad_led_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -256,10 +308,16 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-
-
+void StartDefaultTask(void *argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
   /* USER CODE END 5 */
-
+}
 
 /**
   * @brief  Period elapsed callback in non blocking mode

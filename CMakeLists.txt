@@ -35,7 +35,9 @@ enable_language(C ASM)
 add_executable(${CMAKE_PROJECT_NAME}
     Core/Inc/pir.h
     Core/Src/security_task.c
-    Core/Src/buzzer.c)
+    Core/Src/buzzer.c
+    Core/Src/lcd.c
+    )
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)

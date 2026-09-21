@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_BUILTIN_Pin GPIO_PIN_13
 #define LED_BUILTIN_GPIO_Port GPIOC
+#define PIR_LED_Pin GPIO_PIN_14
+#define PIR_LED_GPIO_Port GPIOC
 #define BUZZER_Pin GPIO_PIN_0
 #define BUZZER_GPIO_Port GPIOA
 #define PIR_Pin GPIO_PIN_2
@@ -79,8 +81,6 @@ void Error_Handler(void);
 #define KEYPAD_C3_GPIO_Port GPIOA
 #define KEYPAD_C4_Pin GPIO_PIN_11
 #define KEYPAD_C4_GPIO_Port GPIOA
-#define PIR_LED_Pin GPIO_PIN_7
-#define PIR_LED_GPIO_Port GPIOB
 #define Keypad_led_Pin GPIO_PIN_8
 #define Keypad_led_GPIO_Port GPIOB
 
