@@ -16,6 +16,7 @@
 #include "keypad_task.h"
 #include "buzzer_task.h"
 #include "lcd.h"
+#include "pir_task.h"
 
 /* USER CODE END Includes */
 
@@ -131,6 +132,7 @@ int main(void)
   keypadQueue = SecurityTask_Init(buzzerQueue);
 
   KeypadTask_Init(keypadQueue);
+  PIRTask_Init();
 
 /* USER CODE END RTOS_THREADS */
   /* USER CODE END RTOS_THREADS */

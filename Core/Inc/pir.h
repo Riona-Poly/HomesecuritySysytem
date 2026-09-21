@@ -3,8 +3,6 @@
 
 #include "main.h"
 
-void PIR_Init(void);
-
-uint8_t PIR_IsMotionDetected(void);
+uint8_t PIR_IsDetected(void);
 
 #endif

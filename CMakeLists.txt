@@ -37,6 +37,8 @@ add_executable(${CMAKE_PROJECT_NAME}
     Core/Src/security_task.c
     Core/Src/buzzer.c
     Core/Src/lcd.c
+    Core/Inc/pir_task.h
+    Core/Src/pir_task.c
     )
 
 # Add STM32CubeMX generated sources
